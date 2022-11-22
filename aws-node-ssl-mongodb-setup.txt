@@ -1,0 +1,111 @@
+AWS
+---------------------
+
+1. Create 1 or 2 EC2 instances of Ubuntu 18.04 as per client requirements
+
+Security Details for NodeJS
+----------------------------
+SSH [22]    : Private
+HTTPS [443] : ALL
+HTTP [80]   : ALL
+
+Security Details for MongoDB
+----------------------------
+SSH [22]        : Private
+MongoD [27017]  : ALL
+
+NodeJS
+---------------------
+
+1. Install NVM
+
+ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.1/install.sh | bash
+ source ~/.bashrc
+
+2. Install NodeJS using NVM
+
+ nvm install 12
+
+3. Check if installed properly
+
+ node --version
+
+4. Copy code in root /home/ubuntu folder
+
+5. install node dependencies from project folder
+
+ npm install 
+
+6. install pm2
+
+    npm install pm2 -g
+
+7. Start project
+
+    pm2 start server.js --name 'server-name' -i 1
+
+8. nginx config [As given in file]
+
+SSL Config
+---------------------
+
+1. Install Certbot
+
+sudo add-apt-repository ppa:certbot/certbot
+sudo apt-get install certbot python-certbot-nginx
+
+2. Get & Install certificates
+
+// Specify all subdomains required
+sudo certbot --nginx -d example.com -d www.example.com
+
+3. Verify for auto-renewal
+
+sudo certbot renew --dry-run
+
+MongoDB
+---------------------
+
+1. Setup APT repo for Mongodb 4.2
+
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 4B7C549A058F8B6B
+echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb.list
+
+
+2. Install mongodb
+
+sudo apt update
+sudo apt install mongodb-org
+
+3. Create & start mongodb as Service
+
+sudo systemctl enable mongod
+sudo systemctl start mongod 
+
+4. Verify installation
+
+mongod --version
+
+5. Create root user
+
+> mongo
+> use admin
+> db.createUser({
+  user: "username",
+  pwd: "password",
+  roles: [ {role:"root" , db : "admin" }]
+})
+
+6. Enable auth & remote access in /etc/mongod.conf
+
+net:
+  port: 27017
+  bindIp: 0.0.0.0
+
+security
+  authorization: "enabled"
+
+7. Restart mongod
+
+sudo systemctl restart mongod 
+
